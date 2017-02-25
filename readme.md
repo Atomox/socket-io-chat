@@ -1,5 +1,5 @@
-# Socket.io Chatroom demo
-* A test for Socket.io, with Express, Node.js and jQuery *
+# Socket.io Chatroom Demo
+*A test for Socket.io, with Express, Node.js and jQuery*
 
 Just testing to see what Socket.io can do.
 
@@ -27,4 +27,13 @@ chat_form.on('submit', function(e) {
    e.preventDefault();
    my_chat.sendMessage(message_field.val());
 });
+```
+4. `index.html` has a target element for the chat, and a form with an input for typing:
+
+```
+        <ul id="future"></ul>
+        <form id="form" id="chat_form">
+            <input id="chat_input" type="text">
+            <input type="submit" value="Send">
+        </form>
 ```
