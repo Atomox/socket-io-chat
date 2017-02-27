@@ -18,18 +18,24 @@ class Chat {
 
 	    // When a new client joins, let us know.
 	    client.on('join', function joinEvent(data) {
+	    	try {
 	    	var user = self.members.add(client.id, data);
 	    	events.join(client, data, user);
+	    	}
+	    	catch(err) {
+	    		console.warn('While regestering user, encountered error: ', err);
+	    	}
 	    });
 
 		  client.on('disconnect', function leaveEvent() {
-		  	var user = self.members.get(client.id);
-		  	/**
-		  	   @TODO
-		  	     REMOVE USER.
-		  	 */
-		  	events.disconnect(client, user);
-		    console.log('Client ', client.id, 'disconnected');
+		  	try {
+			  	var user = self.members.remove(client.id);
+			  	events.disconnect(client, user);
+			    console.log('Client ', user.name, '(', client.id ,') disconnected');
+			  }
+			  catch(err) {
+			  	console.warn('Tried to remove a user who doesn\'t exist. Error: ', err);
+			  }
 		  });
 
 	    client.on('error', function errorEvent(err) {

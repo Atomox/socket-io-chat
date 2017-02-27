@@ -24,6 +24,12 @@ var my_chat = (function() {
 	}
 
 
+	/**
+	 * Join a new chatroom/socket namespace.
+	 *
+	 * @param  {string} room
+	 *   A namespace of a socket / room.
+	 */
 	function join(room) {
 		if (typeof room === 'string' && room.length > 0) {
 			socket = io.connect(host + ':' + port + '/' + room);
@@ -42,10 +48,16 @@ var my_chat = (function() {
 	}
 
 
+	/**
+	 * Leave a room / disconnect.
+	 */
 	function leave() {
 		/**
 		   @TODO
 		 */
+		if (typeof socket !== null) {
+			socket.disconnect();
+		}
 	}
 
 

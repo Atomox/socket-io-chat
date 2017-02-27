@@ -22,7 +22,7 @@ my_chat.init('http://localhost', '4200', screen);
 my_chat.join('your_chat_namespace');
 
 // Send a message.
-my_chat.sendMessage(message_field.val());
+my_chat.sendMessage('Hello World.');
 ```
 4. `index.html` has a target element for the chat, and a form with an input for typing:
 

@@ -16,14 +16,15 @@ class Users {
 	 *   Either the created user object, or false on failure.
 	 *
 	 * @throws {Error}
-	 *   If [this condition is met]If they already exist, we'll throw an error.
+	 *   If they already exist, we'll throw an error.
 	 */
 	add(client_id, data) {
 		if (typeof client_id === 'undefined' || client_id === null) {
 			throw new Error('Cannot have client without ID.');
 		}
 		else if (typeof this.client_list[client_id] !== 'undefined') {
-			throw new Error('Client already exists.');
+			console.log(this.client_list[client_id]);
+			throw new Error('Client already exists. "' + client_id + '"');
 		}
 
 		this.client_list[client_id] = {
@@ -35,6 +36,34 @@ class Users {
 		this.user_id_counter++;
 
 		return this.client_list[client_id];
+	}
+
+	/**
+	 * Remove the user from the user list.
+	 *
+	 * @param {string} client_id
+	 *   The unique ID of the client.
+	 *
+	 * @return {object|boolean}
+	 *   Either the removed user object, or false on failure.
+	 *
+	 * @throws {Error}
+	 *   Errors if users does not exist.
+	 */
+	remove(client_id) {
+		var user = this.getUserByClientId(client_id);
+		if (user) {
+			var pos = this.getUserByTrait(client_id,null,null,true);
+			if (pos) {
+				delete this.client_list[pos];
+				return user;
+			}
+		}
+		else {
+			throw new Error('Cannot remove user whom does not exist.');
+		}
+
+		return false;
 	}
 
 	get(client_id) {
@@ -82,18 +111,23 @@ class Users {
 	 * @return {object|false}
 	 *   User object if found. Otherwise, false.
 	 */
-	getUserByTrait(client_id, uid, name) {
+	getUserByTrait(client_id, uid, name, get_index) {
 		var trait = null,
 			trait_val = null;
 
-		if (this.isset(client_id)) {		trait = 'client_id'; 	trait_val = client_id;	}
+		if (this.isset(client_id)) 	{		trait = 'client_id'; 	trait_val = client_id;	}
 		else if(this.isset(uid)) 		{		trait = 'uid'; 				trait_val = uid; 				}
-		else if (this.isset(name)) { 	trait = 'name'; 			trait_val = name;				}
+		else if (this.isset(name)) 	{ 	trait = 'name'; 			trait_val = name;				}
 
 		if (this.isset(trait)) {
 			for (i in this.client_list) {
 				if (this.client_list[i][trait] == trait_val) {
-					return this.client_list[i];
+					if (get_index === true) {
+						return i;
+					}
+					else {
+						return this.client_list[i];
+					}
 				}
 			}
 		}
