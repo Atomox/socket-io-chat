@@ -2,6 +2,8 @@ var my_chat = (function() {
 
 	// Our socket connection, and our user object.
 	var socket = null,
+			host = '',
+			port = '',
 			myself = false,
 			screen_element = false;
 
@@ -13,19 +15,37 @@ var my_chat = (function() {
 	 * @param  {int} port
 	 *   The port our host is listening on.
 	 */
-	function init(host, port, screen_elem) {
-		socket = io.connect(host + ':' + port);
+	function init(target_host, target_port, screen_elem) {
+		host = target_host;
+		port = target_port;
 
 		// The target "Screen" element.
 		screen_element = screen_elem;
+	}
 
-		socket.on('connect', function(data) {
-		   socket.emit('join', 'Hello World from client');
-		});
 
-		socket.on('broad', function(data) {
-		   route_message(data);
-		});
+	function join(room) {
+		if (typeof room === 'string' && room.length > 0) {
+			socket = io.connect(host + ':' + port + '/' + room);
+
+			socket.on('connect', function(data) {
+			   socket.emit('join', 'Hello World from client');
+			});
+
+			socket.on('broad', function(data) {
+			   route_message(data);
+			});
+		}
+		else {
+			console.log('Requested room to join was invalid.');
+		}
+	}
+
+
+	function leave() {
+		/**
+		   @TODO
+		 */
 	}
 
 
@@ -150,6 +170,7 @@ var my_chat = (function() {
 
 	return {
 		init: init,
+		join: join,
 		whoAmI: who_am_i,
 		showMessage: show_message,
 		sendMessage: send_message

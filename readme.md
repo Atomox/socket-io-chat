@@ -9,31 +9,23 @@ Just testing to see what Socket.io can do.
 ```
         <script src="/jquery/dist/jquery.js"></script>
         <script src="/socket.io/socket.io.js"></script>
-        <script src="../chat.js"></script>
+        <script src="../chat.client.js"></script>
         <script src="../index.js"></script>
 ```
 3. Index.js is your guy. Init like so:
 ```
-// Some dom elements.
-var chat_form = jQuery('form'),
-   message_field = jQuery('#chat_input'),
-   screen = jQuery('#future');
+// Target for the chat window.
+var screen = jQuery('#future');
 
-// Init the chat module.
+// Init the chat module, and join a room/namespace.
 my_chat.init('http://localhost', '4200', screen);
+my_chat.join('your_chat_namespace');
 
-// When we submit a message, send it.
-chat_form.on('submit', function(e) {
-   e.preventDefault();
-   my_chat.sendMessage(message_field.val());
-});
+// Send a message.
+my_chat.sendMessage(message_field.val());
 ```
 4. `index.html` has a target element for the chat, and a form with an input for typing:
 
 ```
-        <ul id="future"></ul>
-        <form id="form" id="chat_form">
-            <input id="chat_input" type="text">
-            <input type="submit" value="Send">
-        </form>
+  <ul id="future"></ul>
 ```

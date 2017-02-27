@@ -1,10 +1,8 @@
-
-
-var users_module = (function userFactory() {
-
-	var client_list = {},
-			user_id_counter = 0;
-
+class Users {
+	constructor() {
+		this.client_list = {},
+			this.user_id_counter = 0;
+	}
 
 	/**
 	 * Add a user for this client.
@@ -20,38 +18,41 @@ var users_module = (function userFactory() {
 	 * @throws {Error}
 	 *   If [this condition is met]If they already exist, we'll throw an error.
 	 */
-	function add_user(client_id, data) {
+	add(client_id, data) {
 		if (typeof client_id === 'undefined' || client_id === null) {
 			throw new Error('Cannot have client without ID.');
 		}
-		else if (typeof client_list[client_id] !== 'undefined') {
+		else if (typeof this.client_list[client_id] !== 'undefined') {
 			throw new Error('Client already exists.');
 		}
 
-		client_list[client_id] = {
+		this.client_list[client_id] = {
 			client_id: client_id,
-			uid: user_id_counter,
-			name: gen_name(client_id),
+			uid: this.user_id_counter,
+			name: this.genName(client_id),
 		};
 
-		user_id_counter++;
+		this.user_id_counter++;
 
-		return client_list[client_id];
+		return this.client_list[client_id];
+	}
+
+	get(client_id) {
+		return this.getUserByClientId(client_id);
+	}
+
+	getUserByName(name) {
+		return this.getUserByTrait(null, null, name);
 	}
 
 
-	function get_user_by_name(name) {
-		return get_user_by_trait(null, null, name);
+	getUserByClientId(client_id) {
+		return this.getUserByTrait(client_id);
 	}
 
 
-	function get_user_by_client_id(client_id) {
-		return get_user_by_trait(client_id);
-	}
-
-
-	function get_user_by_uid(uid) {
-		get_user_by_trait(null, uid);
+	getUserByUid(uid) {
+		return this.getUserByTrait(null, uid);
 	}
 
 
@@ -64,8 +65,8 @@ var users_module = (function userFactory() {
 	 * @return {object|boolean}
 	 *   The user object's public data, or false on failure.
 	 */
-	function get_public_user(client_id) {
-		if (user = get_user_by_client_id(client_id)) {
+	getPublicUser(client_id) {
+		if (user = this.getUserByClientId(client_id)) {
 			return {
     		uid: user.uid,
     		name: user.name
@@ -81,18 +82,18 @@ var users_module = (function userFactory() {
 	 * @return {object|false}
 	 *   User object if found. Otherwise, false.
 	 */
-	function get_user_by_trait(client_id, uid, name) {
+	getUserByTrait(client_id, uid, name) {
 		var trait = null,
 			trait_val = null;
 
-		if (isset(client_id)) {		trait = 'client_id'; 	trait_val = client_id;	}
-		else if(isset(uid)) 		{		trait = 'uid'; 				trait_val = uid; 				}
-		else if (isset(name)) { 	trait = 'name'; 			trait_val = name;				}
+		if (this.isset(client_id)) {		trait = 'client_id'; 	trait_val = client_id;	}
+		else if(this.isset(uid)) 		{		trait = 'uid'; 				trait_val = uid; 				}
+		else if (this.isset(name)) { 	trait = 'name'; 			trait_val = name;				}
 
-		if (isset(trait)) {
-			for (i in client_list) {
-				if (client_list[i][trait] == trait_val) {
-					return client_list[i];
+		if (this.isset(trait)) {
+			for (i in this.client_list) {
+				if (this.client_list[i][trait] == trait_val) {
+					return this.client_list[i];
 				}
 			}
 		}
@@ -103,7 +104,7 @@ var users_module = (function userFactory() {
 	/**
 	 * Generate a random name not already taken by another user.
 	 */
-	function gen_name(id) {
+	genName(id) {
 
 		/**
 		 * These are all names of Ubuntu releases.
@@ -138,8 +139,8 @@ var users_module = (function userFactory() {
 			result = null;
 
 		while(result === null) {
-			var i = getRand(0, names.length-1);
-			if (get_user_by_name(names[i]) === false) {
+			var i = this.getRand(0, names.length-1);
+			if (this.getUserByName(names[i]) === false) {
 				result = names[i];
 				break;
 			}
@@ -152,31 +153,17 @@ var users_module = (function userFactory() {
 	/**
 	 * Generate a random number between min - max.
 	 */
-	function getRand(max, min) { return Math.floor((Math.random()) * (max - min)) + min; }
+	getRand(max, min) { return Math.floor((Math.random()) * (max - min)) + min; }
 
 
 	/**
 	 * Checks if value is set.
 	 */
-	function isset(val) {
+	isset(val) {
 		return (typeof val !== 'undefined' && val !== null) ? true : false;
 	}
-
-
-	return {
-		add_user: add_user,
-		get_user: get_user_by_client_id,
-		get_public_user, get_public_user,
-		get_user_by_name: get_user_by_name,
-		get_user_by_uid: get_user_by_uid
-	};
-
-})();
+}
 
 module.exports = {
-	add: users_module.add_user,
-	get: users_module.get_user,
-	getById: users_module.get_user_by_uid,
-	getByName: users_module.get_user_by_name,
-	getPublicUser: users_module.get_public_user
+	Users: Users
 };

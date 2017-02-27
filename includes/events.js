@@ -1,4 +1,3 @@
-var user = user || require('./user');
 
 /**
  * Perform during a join.
@@ -8,10 +7,9 @@ var user = user || require('./user');
  * @param  {mixed} data
  *   Any data passed on a join.
  */
-function join_event(client, data) {
-  var my_self = user.add(client.id, data),
-  		send_user = format_message(client, 'id'),
-  		join_alert = format_message(client, 'join', my_self.name + 'joined the room');
+function join_event(client, data, user) {
+  var send_user = format_message(client, user, 'id'),
+  		join_alert = format_message(client, user, 'join', user.name + 'joined the room');
 
   // Send the clients id to the client itself,
   // and broadcast a join event to everyone else.
@@ -27,10 +25,8 @@ function join_event(client, data) {
  * @param  {IO client} client
  *   Client passed on a connection event.
  */
-function disconnect_event(client) {
-	var my_self = user.get(client.id),
-    	left_alert = format_message(client, 'left', my_self.name + 'left the room');
-
+function disconnect_event(client, user) {
+	var left_alert = format_message(client, user, 'left', user.name + 'left the room');
 	client.broadcast.emit('broad', left_alert);
 }
 
@@ -41,9 +37,9 @@ function disconnect_event(client) {
  * @param  {IO client} client
  *   Client passed on a connection event.
  */
-function messages_event(client, data) {
+function messages_event(client, data, user) {
 	// Prepare the message format.
-	var msg = format_message(client, 'message', data.message);
+	var msg = format_message(client, user, 'message', data.message);
 
 	// Broadcast back to the user, then to everyone else.
 	client.emit('broad', msg);
@@ -54,19 +50,22 @@ function messages_event(client, data) {
 /**
  * Format a message.
  */
-function format_message(client, type, message, data) {
+function format_message(client, user, type, message, data) {
 	var result = {};
 
 	if (type == 'message' || type == 'alert' || type == 'join' || type == 'left') {
-    result.user = user.get(client.id).name;
-    result.uid = user.get(client.id).uid;
+    result.user = user.name;
+    result.uid = user.uid;
 		result.message = message;
 		result.type = type;
 	}
 	else if (type == 'id') {
 		result = {
     	type: 'id',
-    	data: user.getPublicUser(client.id)
+    	data: {
+    		uid: user.uid,
+    		name: user.name
+    	}
     };
 	}
 
