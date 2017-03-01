@@ -1,26 +1,66 @@
 <!doctype html>  
 <html lang="en">  
-    <head>
+  <head>
+      <link rel="stylesheet" href="/css/app.css">
+  </head>
+  <body>
 
-    </head>
-    <body>
-        <h1>Socket.io Demo</h1>
-        <form id="room_select">
-            <select id="room" type="text" placeholder="Select your room...">
-                <option value='chat/1'>1</option>
-                <option value='chat/2'>2</option>
-                <option value='chat/3'>3</option>
+    <div class="off-canvas position-left" id="menuOffCanvas" data-off-canvas>
+
+      <!-- Close button -->
+      <button class="close-button" aria-label="Close menu" type="button" data-close>
+        <span aria-hidden="true">&times;</span>
+      </button>
+
+      <!-- Menu -->
+      <ul class="vertical menu">
+        <li><a href="#">Foundation</a></li>
+        <li><a href="#">Dot</a></li>
+        <li><a href="#">ZURB</a></li>
+        <li><a href="#">Com</a></li>
+        <li><a href="#">Slash</a></li>
+        <li><a href="#">Sites</a></li>
+      </ul>
+
+    </div>
+    <div class="off-canvas-content" data-off-canvas-content>
+      <!-- Your page content lives here -->
+
+      <form id="room_select">
+          <div class="input-group">
+          <span class="input-group-label"><i class="fa fa-comments-o" aria-hidden="true"></i></span>
+            <select id="room" type="text" placeholder="Select your room..." class="input-group-field">
+              <option value=''>Select a room....</option>
+              <option value='chat/1'>Lounge</option>
+              <option value='chat/2'>Tech</option>
+              <option value='chat/3'>Ocelots</option>
             </select>
-            <input type="submit" value="Send">
-        </form>
-        <ul id="future"></ul>
-        <form id="chat_form">
-            <input id="chat_input" type="text">
-            <input type="submit" value="Send">
-        </form>
-        <script src="/jquery/dist/jquery.js"></script>
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="../chat.client.js"></script>
-        <script src="../index.js"></script>
-    </body>
+            <div class="input-group-button">
+              <button type="button" class="button" data-toggle="menuOffCanvas">Menu</button>
+            </div>
+          </div>
+      </form>
+      <h4 class="subheader">Socket.io Demo</h4>
+      <div id="future"></div>
+      <form id="chat_form">
+          <div class="input-group">
+              <span class="input-group-label"> > </span>
+              <input id="chat_input" type="text" class="input-group-field" placeholder="message">
+          </div>
+      </form>
+    </div>
+
+
+    <script src="/jquery/dist/jquery.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/chat.client.js"></script>
+    <script src="/js/index.js"></script>
+
+    <script src="/js/foundation.core.js"></script>
+    <script src="/js/foundation.offcanvas.js"></script>
+    <script src="/js/foundation.util.keyboard.js"></script>
+    <script src="/js/foundation.util.mediaQuery.js"></script>
+    <script src="/js/foundation.util.triggers.js"></script>
+    <script src="/js/foundation.util.motion.js"></script>
+  </body>
 </html>

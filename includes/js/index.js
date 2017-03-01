@@ -17,9 +17,7 @@ chat_form.on('submit', function(e) {
    message_field.val('');
 });
 
-room_select_form.on('submit', function(e) {
+room_select_form.on('change', function(e) {
    e.preventDefault();
    my_chat.join(room_field.val());
 });
-
-

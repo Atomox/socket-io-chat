@@ -27,5 +27,5 @@ my_chat.sendMessage('Hello World.');
 4. `index.html` has a target element for the chat, and a form with an input for typing:
 
 ```
-  <ul id="future"></ul>
+  <div id="future"></div>
 ```

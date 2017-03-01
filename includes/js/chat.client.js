@@ -60,6 +60,11 @@ var my_chat = (function() {
 		}
 	}
 
+	function updateChatScroll() {
+    screen_element.scrollTop(screen_element[0].scrollHeight);
+		console.log('Scroll height:', screen_element[0].scrollHeight);
+	}
+
 
 	/**
 	 * Handle any incoming messages.
@@ -77,10 +82,12 @@ var my_chat = (function() {
       // A join or left alert.
       else if (data.type == 'join' || data.type == 'left') {
       	show_alert(data.type, data.uid, data.user);
+      	updateChatScroll();
       }
       // General messages.
       else {
         show_message('', data.uid, data.user, data.message);
+      	updateChatScroll();
       }
    	}
 	}
@@ -99,7 +106,7 @@ var my_chat = (function() {
 	 *   The actual message.
 	 */
 	function show_alert(type, uid, user, message) {
-		var this_user = '<span class="person">' + user + '</span>',
+		var this_user = message_component_user(user, uid),
 				who = is_this_me(uid) ? 'You'	: this_user;
 
 		if (type == 'join') {
@@ -111,7 +118,7 @@ var my_chat = (function() {
 			var what = 'left the room.';
 		}
 
-		screen_element.append('<li>' + who + ' ' + what + '</li>');
+		screen_element.append('<div class="row alert"><div class="small-12 column">' + who + ' ' + what + '</div></div>');
 	}
 
 
@@ -127,15 +134,32 @@ var my_chat = (function() {
 	 * @param  {string} message
 	 *   The actual message.
 	 */
-	function show_message(type, uid, user, message) {
+	function show_message(type, uid, user, message, icon) {
 
-	   var user = is_this_me(uid)
-	      ? '<b>' + user + '</b>: '
-	      : '<i>' + user + '</i>: ';
+	   var user = message_component_user(user, uid);
 
-	   var line = '<li>' + user + message + '</li>';
+	   if (!icon) {
+	   	icon = '<span class="fa-stack fa-lg">'
+  				+ '<i class="fa fa-square-o fa-stack-2x"></i>'
+  				+ '<i class="fa fa-user-o fa-stack-1x"></i>'
+					+ '</span>';
+	   }
+
+	   var line = '<div class="row"><div class="small-2 medium-1 column">'
+	   	+ icon + '</div>'
+	   	+ '<div class="small-10 medium-11 column">'
+	   	+ user + '<br/>'
+	   	+ message + '</div></div>';
 	   screen_element.append(line);
 	}
+
+
+	function message_component_user(user, uid) {
+		return is_this_me(uid)
+	      ? '<span class="user self">' + user + '</span>'
+	      : '<span class="user">' + user + '</span>';
+	}
+
 
 	/**
 	 * Send a message to the server.

@@ -1,0 +1,28 @@
+div#future {
+	overflow-y: scroll;
+	@include breakpoint(small) {
+		height: 60vh;
+		max-height: 60vh;
+	}
+	@include breakpoint(medium up) {
+		height: 75vh;
+		max-height: 75vh;
+	}
+}
+
+.user {
+	font-weight: medium;
+	font-style: italic;
+}
+
+.user.self {
+	font-weight: bold;
+	font-style: normal;
+}
+
+#future .row {
+	margin: 0.5rem 0;
+}
+.alert {
+	font-size: .85rem;
+}

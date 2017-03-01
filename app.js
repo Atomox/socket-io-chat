@@ -7,18 +7,18 @@ var chat = require('./includes/chat.server.class.js');
 // Serve up includes in node_modules, and app-specific in /includes.
 app.use(express.static(__dirname + '/node_modules'));
 app.use(express.static(__dirname + '/includes'));
+app.use(express.static(__dirname + '/includes/theme/foundation'));
+app.use(express.static(__dirname + '/includes/theme/foundation/bower_components/foundation-sites/'));
 
-
-app.get('/', function(req, resp, next) {
-	resp.sendFile(__dirname + '/index.html');
-});
-
+// Routing
 app.get('/chat', function(req, resp, next) {
 	resp.sendFile(__dirname + '/chat.html');
 });
 
+// Listen on this port only.
 server.listen(4200);
 
+// Create namespaces for these rooms.
 var namespaces = [
 	'/chat/1',
 	'/chat/2',
@@ -27,6 +27,7 @@ var namespaces = [
 
 var nsp = [];
 
+// Spin up instances for each room.
 for (i in namespaces) {
 	nsp[i] = new chat.Chat(namespaces[i], 'Chatroom ' + i, io);
 	nsp[i].start();
