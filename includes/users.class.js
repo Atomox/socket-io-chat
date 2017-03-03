@@ -96,12 +96,17 @@ class Users {
 	 */
 	getPublicUser(client_id) {
 		if (user = this.getUserByClientId(client_id)) {
-			return {
-    		uid: user.uid,
-    		name: user.name
-    	};
+			return this.formatUserPublic(user);
 		}
 		return false;
+	}
+
+
+	formatUserPublic(user) {
+		return {
+  		uid: user.uid,
+  		name: user.name
+  	};
 	}
 
 
@@ -132,6 +137,19 @@ class Users {
 			}
 		}
 		return false;
+	}
+
+
+	/**
+	 * Get a public list of user data in this group.
+	 */
+	getAllPublic() {
+		var results = [];
+		for (i in this.client_list) {
+			results.push(this.formatUserPublic(this.client_list[i]));
+		}
+
+		return results;
 	}
 
 

@@ -1,60 +1,51 @@
-<!doctype html>  
-<html lang="en">  
+<!doctype html>
+<html lang="en">
   <head>
       <link rel="stylesheet" href="/css/app.css">
   </head>
   <body>
+    <div class="off-canvas-wrapper">
 
-    <div class="off-canvas position-left" id="menuOffCanvas" data-off-canvas>
+      <!-- Hamburger Menu -->
+      <div class="off-canvas position-left" id="offCanvas" data-off-canvas>
+        <!-- Close button -->
+        <button class="close-button" aria-label="Close menu" type="button" data-close>
+          <span aria-hidden="true">&times;</span>
+        </button>
 
-      <!-- Close button -->
-      <button class="close-button" aria-label="Close menu" type="button" data-close>
-        <span aria-hidden="true">&times;</span>
-      </button>
+        <!-- Menu loads here -->
+        <ul class="menu vertical" id="rooms"></ul>
+      </div>
 
-      <!-- Menu -->
-      <ul class="vertical menu">
-        <li><a href="#">Foundation</a></li>
-        <li><a href="#">Dot</a></li>
-        <li><a href="#">ZURB</a></li>
-        <li><a href="#">Com</a></li>
-        <li><a href="#">Slash</a></li>
-        <li><a href="#">Sites</a></li>
-      </ul>
 
-    </div>
-    <div class="off-canvas-content" data-off-canvas-content>
-      <!-- Your page content lives here -->
+      <!-- Main Content -->
+      <div class="off-canvas-content" data-off-canvas-content>
 
-      <form id="room_select">
-          <div class="input-group">
-          <span class="input-group-label"><i class="fa fa-comments-o" aria-hidden="true"></i></span>
-            <select id="room" type="text" placeholder="Select your room..." class="input-group-field">
-              <option value=''>Select a room....</option>
-              <option value='chat/1'>Lounge</option>
-              <option value='chat/2'>Tech</option>
-              <option value='chat/3'>Ocelots</option>
-            </select>
-            <div class="input-group-button">
-              <button type="button" class="button" data-toggle="menuOffCanvas">Menu</button>
+        <div class="row">
+          <div class="small-2 columns">
+            <button type="button" class="button" data-toggle="offCanvas">
+              <i class="fa fa-align-justify" aria-hidden="true"></i>
+              <i class="fa fa-comments-o" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="small-6 columns chat-title-bar">
+            <h2 id="RoomName">Socket.io Demo</h4>
+            <div class="chat-stats"><i class="fa fa-user-circle" aria-hidden="true"></i><span id="user-count"></span></div>
+          </div>
+          <div class="small-6 large-4 columns"><!-- ... --></div>
+        </div>
+
+        <div id="future"></div>
+        <form id="chat_form">
+            <div class="input-group">
+                <span class="input-group-label"> > </span>
+                <input id="chat_input" type="text" class="input-group-field" placeholder="message">
             </div>
-          </div>
-      </form>
-      <h4 class="subheader">Socket.io Demo</h4>
-      <div id="future"></div>
-      <form id="chat_form">
-          <div class="input-group">
-              <span class="input-group-label"> > </span>
-              <input id="chat_input" type="text" class="input-group-field" placeholder="message">
-          </div>
-      </form>
+        </form>
+      </div>
     </div>
-
 
     <script src="/jquery/dist/jquery.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/chat.client.js"></script>
-    <script src="/js/index.js"></script>
 
     <script src="/js/foundation.core.js"></script>
     <script src="/js/foundation.offcanvas.js"></script>
@@ -62,5 +53,9 @@
     <script src="/js/foundation.util.mediaQuery.js"></script>
     <script src="/js/foundation.util.triggers.js"></script>
     <script src="/js/foundation.util.motion.js"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/chat.client.js"></script>
+    <script src="/js/index.js"></script>
   </body>
 </html>

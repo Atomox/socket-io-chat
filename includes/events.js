@@ -8,8 +8,8 @@
  *   Any data passed on a join.
  */
 function join_event(client, data, user) {
-  var send_user = format_message(client, user, 'id'),
-  		join_alert = format_message(client, user, 'join', user.name + 'joined the room');
+  var send_user = format_message(client, user, 'id', '', data.chat),
+  		join_alert = format_message(client, user, 'join', user.name + 'joined the room', data.chat);
 
   // Send the clients id to the client itself,
   // and broadcast a join event to everyone else.
@@ -25,8 +25,8 @@ function join_event(client, data, user) {
  * @param  {IO client} client
  *   Client passed on a connection event.
  */
-function disconnect_event(client, user) {
-	var left_alert = format_message(client, user, 'left', user.name + 'left the room');
+function disconnect_event(client, data, user) {
+	var left_alert = format_message(client, user, 'left', user.name + 'left the room', data.chat);
 	client.broadcast.emit('broad', left_alert);
 }
 
@@ -54,17 +54,23 @@ function format_message(client, user, type, message, data) {
 	var result = {};
 
 	if (type == 'message' || type == 'alert' || type == 'join' || type == 'left') {
-    result.user = user.name;
-    result.uid = user.uid;
-		result.message = message;
-		result.type = type;
+    result = {
+    	user: user.name,
+    	uid: user.uid,
+			message: message,
+			type: type,
+			data: {
+				room: data
+			}
+		};
 	}
 	else if (type == 'id') {
 		result = {
     	type: 'id',
     	data: {
     		uid: user.uid,
-    		name: user.name
+    		name: user.name,
+    		room: data
     	}
     };
 	}

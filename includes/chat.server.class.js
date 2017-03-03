@@ -6,6 +6,7 @@ class Chat {
 	constructor (id, name, io) {
 		this.id = id;
 		this.members = new users.Users();
+		this.name = name;
 		this.connection = io.of(id);
 	}
 
@@ -19,8 +20,9 @@ class Chat {
 	    // When a new client joins, let us know.
 	    client.on('join', function joinEvent(data) {
 	    	try {
-	    	var user = self.members.add(client.id, data);
-	    	events.join(client, data, user);
+	    	var user = self.members.add(client.id, data),
+	    			my_data = {chat: self.getStats(), data: data };
+	    	events.join(client, my_data, user);
 	    	}
 	    	catch(err) {
 	    		console.warn('While regestering user, encountered error: ', err);
@@ -29,8 +31,9 @@ class Chat {
 
 		  client.on('disconnect', function leaveEvent() {
 		  	try {
-			  	var user = self.members.remove(client.id);
-			  	events.disconnect(client, user);
+			  	var user = self.members.remove(client.id),
+			  			data = {	chat: self.getStats()	};
+			  	events.disconnect(client, data, user);
 			    console.log('Client ', user.name, '(', client.id ,') disconnected');
 			  }
 			  catch(err) {
@@ -48,6 +51,14 @@ class Chat {
 	    	events.messages(client, data, user);
 	    });
 		});
+	}
+
+	getStats() {
+		return {
+			users: this.members.getAllPublic(),
+			name: this.name,
+			id: this.id
+		};
 	}
 }
 

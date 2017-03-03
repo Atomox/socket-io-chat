@@ -26,3 +26,15 @@ div#future {
 .alert {
 	font-size: .85rem;
 }
+
+.chat-title-bar {
+	h2 {
+		font-size: 1.2rem;
+		font-weight: bold;
+	}
+}
+
+.chat-title-bar .chat-stats {
+	font-size: .85rem;
+	color: #999;
+}

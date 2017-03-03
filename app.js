@@ -15,6 +15,14 @@ app.get('/chat', function(req, resp, next) {
 	resp.sendFile(__dirname + '/chat.html');
 });
 
+app.get('/chat/roomlist', function(req,resp,next) {
+	var result = [];
+	for (i in nsp) {
+		result.push(nsp[i].getStats());
+	}
+	resp.send(result);
+});
+
 // Listen on this port only.
 server.listen(4200);
 

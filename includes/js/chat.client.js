@@ -5,7 +5,10 @@ var my_chat = (function() {
 			host = '',
 			port = '',
 			myself = false,
-			screen_element = false;
+			screen_element = false,
+			title_element = false,
+			room_count = false,
+			room_list = false;
 
 	/**
 	 * Initialization of the chat.
@@ -15,12 +18,47 @@ var my_chat = (function() {
 	 * @param  {int} port
 	 *   The port our host is listening on.
 	 */
-	function init(target_host, target_port, screen_elem) {
+	function init(target_host, target_port, elements) {
 		host = target_host;
 		port = target_port;
 
-		// The target "Screen" element.
-		screen_element = screen_elem;
+		if (elements.screen) {
+			// The target "Screen" element.
+			screen_element = jQuery('#' + elements.screen);
+		}
+		if (elements.title) {
+			title_element = jQuery('#' + elements.title);
+		}
+		if (elements.room_count) {
+			room_count = jQuery('#' + elements.room_count);
+		}
+		if (elements.room_list) {
+			room_list = jQuery('#' + elements.room_list);
+		}
+	}
+
+
+	function getRooms() {
+
+		var getRoom = jQuery.Deferred();
+
+		// URL where our acceptance lives.
+    var url = 'http://' + window.location.host + '/chat/roomlist';
+
+		ajaxStandardPromise({
+			  type: "GET",
+        url: url,
+        dataType: "json"
+		}).then(function completeAjax(data, status) {
+			console.log('result', data);
+      getRoom.resolve(data);
+
+		}).fail(function failAjax(xhr,status,err) {
+			console.warn(err);
+      getRoom.reject(err);
+		});
+
+		return getRoom;
 	}
 
 
@@ -32,6 +70,9 @@ var my_chat = (function() {
 	 */
 	function join(room) {
 		if (typeof room === 'string' && room.length > 0) {
+			if(room.substring(0,1) === '/') {
+				room = room.substring(1);
+			}
 			socket = io.connect(host + ':' + port + '/' + room);
 
 			socket.on('connect', function(data) {
@@ -66,6 +107,22 @@ var my_chat = (function() {
 	}
 
 
+	function updateRoomStats(info) {
+		var count = info.users.length;
+		console.log(count, 'users in room');
+		title_element.text(info.name);
+		room_count.text(count);
+	}
+
+
+	function updateChat(info) {
+		updateChatScroll();
+		if (typeof info !== 'undefined' && info !== null) {
+			updateRoomStats(info);
+		}
+	}
+
+
 	/**
 	 * Handle any incoming messages.
 	 *
@@ -75,6 +132,8 @@ var my_chat = (function() {
 	function route_message(data) {
 		if (typeof data === 'object' && data !== null) {
 
+			console.log('Message for you sir', data);
+
 			// Your join ID alert.
       if (data.type == 'id') {
          myself = data.data;
@@ -82,12 +141,12 @@ var my_chat = (function() {
       // A join or left alert.
       else if (data.type == 'join' || data.type == 'left') {
       	show_alert(data.type, data.uid, data.user);
-      	updateChatScroll();
+      	updateChat(data.data.room);
       }
       // General messages.
       else {
         show_message('', data.uid, data.user, data.message);
-      	updateChatScroll();
+      	updateChat(data.data.room);
       }
    	}
 	}
@@ -204,11 +263,40 @@ var my_chat = (function() {
 	}
 
 
+  /**
+   * jQuery Ajax function, wrapped in a standard promise.
+   *
+   * @param {object} settings
+   *   Standard settings passed to jQuery.ajax().
+   *
+   * @return {Promise}
+   *   Standard promise, where resolve() is passed contents of .done().
+   */
+  function ajaxStandardPromise(settings) {
+
+    // Use a promise to handle errors outside of ajax's own promise.
+    var myPromise = jQuery.Deferred();
+
+    // Wrap the AJAX with a standard promise,
+    // for more unform results.
+    jQuery.ajax(settings)
+      .done(function ajaxDone(data, status) {
+        myPromise.resolve(data, status);
+      })
+      .fail(function ajaxFail(jqXHR, status, err) {
+        myPromise.reject(jqXHR, status, err);
+      });
+
+    return myPromise;
+  }
+
+
 	return {
 		init: init,
 		join: join,
 		whoAmI: who_am_i,
 		showMessage: show_message,
-		sendMessage: send_message
+		sendMessage: send_message,
+		getRooms: getRooms
 	};
 })();
